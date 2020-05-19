@@ -51,6 +51,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	FVector LineTraceEnd = GetLineTraceEnd(PlayerLocation, PlayerRotation);
 
+	if(!PhysicsHandle){return;}
 	if(PhysicsHandle->GrabbedComponent){
 		PhysicsHandle->SetTargetLocation(LineTraceEnd);
 	}
@@ -69,6 +70,7 @@ void UGrabber::Grab(){
 	UPrimitiveComponent *ComponentToGrab = Hit.GetComponent();
 
 	if(Hit.GetActor()){
+		if(!PhysicsHandle){return;}
 		PhysicsHandle->GrabComponentAtLocation(
 		ComponentToGrab,
 		NAME_None,
@@ -81,6 +83,7 @@ void UGrabber::Grab(){
 void UGrabber::Release(){
 	UE_LOG(LogTemp, Warning, TEXT("Release!"));
 
+	if(!PhysicsHandle){return;}
 	PhysicsHandle->ReleaseComponent();
 }
 

@@ -2,6 +2,7 @@
 
 
 #include "OpenDoor.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
@@ -40,7 +41,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(PressurePlate && PressurePlate->IsOverlappingActor(GetWorld()->GetFirstPlayerController()->GetPawn())){
+	if(PressurePlate && TotalMassOfActors() >= MassToOpenDoor){
 		UE_LOG(LogTemp, Warning, TEXT("Door open activated!"));
 		onPressurePad = true;
 		OpenDoor(DeltaTime);
@@ -76,5 +77,24 @@ void UOpenDoor::CloseDoor(float DeltaTime){
 	Rotation.Yaw = FMath::FInterpConstantTo(CurrentYaw, InitialYaw, DeltaTime , FMath::Abs((OpenAngle - InitialYaw))/DoorCloseSpeedTime);
 
 	GetOwner()->SetActorRotation(Rotation);
+}
+
+float UOpenDoor::TotalMassOfActors() const{
+	float TotalMass = 0.0f;
+
+	// Find all overlapping actors
+
+	if(!PressurePlate){return -1;}
+
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OverlappingActors);
+
+	for(int32 i = 0; i < OverlappingActors.Num(); i++){
+		TotalMass += OverlappingActors[i]->FindComponentByClass<UPrimitiveComponent>()->GetMass();\
+		UE_LOG(LogTemp, Warning, TEXT("Actor %i on the pressure pad is %s"), i, *OverlappingActors[i]->GetName());
+	}
+
+
+	return TotalMass;
 }
 
