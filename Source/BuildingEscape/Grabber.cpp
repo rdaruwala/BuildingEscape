@@ -49,12 +49,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	FVector PlayerLocation;
 	FRotator PlayerRotation;
 
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT PlayerLocation, 
-		OUT PlayerRotation	
-	);
-
-	FVector LineTraceEnd = PlayerLocation + PlayerRotation.Vector() * Reach;
+	FVector LineTraceEnd = GetLineTraceEnd(PlayerLocation, PlayerRotation);
 
 	if(PhysicsHandle->GrabbedComponent){
 		PhysicsHandle->SetTargetLocation(LineTraceEnd);
@@ -69,21 +64,7 @@ void UGrabber::Grab(){
 
 	FHitResult Hit;
 	
-	bool bDidHit = CheckForHit(OUT Hit);
-
-	if(bDidHit){
-		UE_LOG(LogTemp, Warning, TEXT("Hit the actor: %s"), *Hit.Actor->GetName());
-	}
-
-	FVector PlayerLocation;
-	FRotator PlayerRotation;
-
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT PlayerLocation, 
-		OUT PlayerRotation	
-	);
-
-	FVector LineTraceEnd = PlayerLocation + PlayerRotation.Vector() * Reach;
+	FVector LineTraceEnd = CheckForHit(OUT Hit);
 
 	UPrimitiveComponent *ComponentToGrab = Hit.GetComponent();
 
@@ -94,9 +75,7 @@ void UGrabber::Grab(){
 		LineTraceEnd
 	);
 
-}
-
-	
+	}
 }
 
 void UGrabber::Release(){
@@ -113,16 +92,13 @@ void UGrabber::FindPhysicsHandle(){
 	}
 }
 
-bool UGrabber::CheckForHit(FHitResult &Hit){
+FVector UGrabber::CheckForHit(FHitResult &Hit){
+	
 	FVector PlayerLocation;
 	FRotator PlayerRotation;
 
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT PlayerLocation, 
-		OUT PlayerRotation	
-	);
+	FVector LineTraceEnd = GetLineTraceEnd(PlayerLocation, PlayerRotation);
 
-	FVector LineTraceEnd = PlayerLocation + PlayerRotation.Vector() * Reach;
 
 	bool bGotAHit = GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
@@ -132,5 +108,17 @@ bool UGrabber::CheckForHit(FHitResult &Hit){
 		FCollisionQueryParams(FName(), true, GetOwner())
 	);
 
-	return bGotAHit;
+	return LineTraceEnd;
+}
+
+FVector UGrabber::GetLineTraceEnd(FVector &PlayerLocation, FRotator &PlayerRotation){
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerLocation, 
+		OUT PlayerRotation	
+	);
+
+	FVector LineTraceEnd = PlayerLocation + PlayerRotation.Vector() * Reach;
+
+	return LineTraceEnd;
 }

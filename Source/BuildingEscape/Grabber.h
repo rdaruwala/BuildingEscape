@@ -27,7 +27,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float Reach = 100.0f;
+	float Reach = 150.0f;
 
 	UPhysicsHandleComponent *PhysicsHandle = nullptr;
 
@@ -38,6 +38,8 @@ private:
 
 	void FindPhysicsHandle();
 
-	bool CheckForHit(FHitResult &Hit);
+	// Both return LineTraceEnd
+	FVector CheckForHit(FHitResult &Hit);
+	FVector GetLineTraceEnd(FVector &PlayerLocation, FRotator &PlayerRotation);
 		
 };
