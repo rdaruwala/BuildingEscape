@@ -61,8 +61,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 }
 
 void UGrabber::Grab(){
-	UE_LOG(LogTemp, Warning, TEXT("Grab!"));
-
 	FHitResult Hit;
 	
 	FVector LineTraceEnd = CheckForHit(OUT Hit);
@@ -81,8 +79,6 @@ void UGrabber::Grab(){
 }
 
 void UGrabber::Release(){
-	UE_LOG(LogTemp, Warning, TEXT("Release!"));
-
 	if(!PhysicsHandle){return;}
 	PhysicsHandle->ReleaseComponent();
 }
