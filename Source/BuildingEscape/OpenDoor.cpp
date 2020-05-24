@@ -85,6 +85,7 @@ void UOpenDoor::CloseDoor(float DeltaTime){
 	bOpenDoorSound = false;
 	if(!AudioComponent){return;}
 	if(!bCloseDoorSound){
+		UE_LOG(LogTemp, Display, TEXT("Playing open door audio!"));
 		AudioComponent->Play();
 		bCloseDoorSound = true;
 	}
